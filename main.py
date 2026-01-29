@@ -6,8 +6,8 @@ import httpx
 import json
 
 # -- API KEYS ---
-GEMINI_API_KEY = "AIzaSyA3bry0LbroMGbl3GjIGQKvNUAZ01OBdK4"#API MAKE TO LINO
-PERPLEXITY_API_KEY = "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"
+GEMINI_API_KEY = ""#Use your Gemini API KEY for testing
+PERPLEXITY_API_KEY = ""#Use your API in perplexity for Testing
 
 genai.configure(api_key = GEMINI_API_KEY)
 app = FastAPI(title = "ABC Company AI Enrichment Service")
@@ -113,4 +113,5 @@ async def root():
 if __name__ == "__main__":
     import uvicorn
     # Listening on 0.0.0.0 is essential for the tunnel to work
+
     uvicorn.run(app, host = "0.0.0.0", port=8000)
