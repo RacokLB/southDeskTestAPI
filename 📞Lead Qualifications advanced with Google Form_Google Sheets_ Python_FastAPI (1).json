@@ -1,0 +1,1288 @@
+{
+  "name": "📞Lead Qualifications advanced with Google Form/Google Sheets/ Python/FastAPI",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "hour": 8
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ",
+          "mode": "list",
+          "cachedResultName": "Form South Derk Company (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 273477218,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ/edit#gid=273477218"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2800,
+        112
+      ],
+      "id": "60880536-fd19-456a-9ff9-345128264d68",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "jM2sqCFeFYsLphVE",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "# Loop over input items and add a new field called 'my_new_field' to the JSON of each one\nfor item in _items:\n  \n  raw_data = item[\"json\"]\n  full_name = raw_data.get('Full name', '').strip().lower()\n  \n  company_name = raw_data.get('Company Name').strip().lower()\n  website = raw_data.get('Company website').strip().lower() if raw_data.get('Company website') else \"\"\n  email = raw_data.get('Email address').strip().lower()\n  \n  source = raw_data.get('Lead source ', 'Other')\n  \n  budget = raw_data.get('Estimated budget($)', '')\n\n\nitem['json'] = {\n  \"normalized\":{\n    \"full_name\":full_name,\n    \"email\": email,\n    \"company_name\": company_name,\n    \"website\": website,\n    \"country\": raw_data.get('Country', '').strip().lower(),\n    \"source\": source,\n    \"budget\": budget,\n    \"notes\": raw_data.get('Notes', '').strip().lower(),\n    \"consent\": raw_data.get('Consent to contact', 'No').lower()\n  },\n  \"raw\":raw_data\n}\n\nreturn _items"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2624,
+        112
+      ],
+      "id": "eeb1abdc-3e34-4130-aa19-15fd117088c0",
+      "name": "Code in Python"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "873fd20e-c49a-49d0-83f0-e0b9c973c8f0",
+              "leftValue": "={{ $json.normalized.company_name }}",
+              "rightValue": "@",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "1f88db6b-4ac3-4aa6-9815-bb05d3db3475",
+              "leftValue": "={{ $json.normalized.consent }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -2432,
+        112
+      ],
+      "id": "5b2e8fce-134b-4886-8e5d-8926eb93b962",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2176,
+        208
+      ],
+      "id": "d583febc-db89-4e9f-86f3-dcbbecb8c1fc",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ",
+          "mode": "list",
+          "cachedResultName": "Form South Derk Company (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 273477218,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ/edit#gid=273477218"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email address",
+              "lookupValue": "={{ $('Google Sheets Trigger').item.json['Email address'] }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1952,
+        16
+      ],
+      "id": "3cca2a93-c417-465c-bd11-92a98c3b6990",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "myUtOXMZbEAlOqlU",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f1dd35dc-74b0-4189-8d05-df0e9b5ef88e",
+              "leftValue": "={{ $json.row_number.toString() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1728,
+        16
+      ],
+      "id": "7f682057-2973-4cda-9177-05836b30ac30",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ",
+          "mode": "list",
+          "cachedResultName": "Form South Derk Company (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 273477218,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ/edit#gid=273477218"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $('Edit Fields').item.json.date }}",
+            "Email Address": "={{ $('Edit Fields').item.json.email }}",
+            "Full name": "={{ $('Edit Fields').item.json.full_name }}",
+            "Email address": "=",
+            "Company Name": "={{ $('Edit Fields').item.json.company_name }}",
+            "Company website": "={{ $('Edit Fields').item.json.website }}",
+            "Country": "={{ $('Edit Fields').item.json.country }}",
+            "Lead source ": "={{ $('Edit Fields').item.json.source }}",
+            "Estimated budget($)": "={{ $('Edit Fields').item.json.budget }}",
+            "Notes": "={{ $('Edit Fields').item.json.notes }}",
+            "Consent to contact": "={{ $('Edit Fields').item.json.consent }}",
+            "Enrichment status": "Pending"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full name",
+              "displayName": "Full name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email address",
+              "displayName": "Email address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company website",
+              "displayName": "Company website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Country",
+              "displayName": "Country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead source ",
+              "displayName": "Lead source ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estimated budget($)",
+              "displayName": "Estimated budget($)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Consent to contact",
+              "displayName": "Consent to contact",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Enrichment status",
+              "displayName": "Enrichment status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1504,
+        112
+      ],
+      "id": "3659aeaf-d0b2-4fce-97e2-cff1000dc6da",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "myUtOXMZbEAlOqlU",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9fbfe837-97ad-48b2-a050-1b20b07ea998",
+              "name": "full_name",
+              "value": "={{ $json.normalized.full_name }}",
+              "type": "string"
+            },
+            {
+              "id": "e9d91d4d-e38c-4fe6-9fb2-c8d759497507",
+              "name": "company_name",
+              "value": "={{ $('Code in Python').item.json.normalized.company_name }}",
+              "type": "string"
+            },
+            {
+              "id": "bb72bae9-1e5e-4d37-a1c3-d01f5075cba2",
+              "name": "website",
+              "value": "={{ $('Code in Python').item.json.normalized.website }}",
+              "type": "string"
+            },
+            {
+              "id": "607ff346-a832-405e-a754-d3f1e711860b",
+              "name": "source",
+              "value": "={{ $('Code in Python').item.json.normalized.source }}",
+              "type": "string"
+            },
+            {
+              "id": "fd89e370-d7ac-43b8-9354-32b5ddf45be6",
+              "name": "budget",
+              "value": "={{ $('Code in Python').item.json.normalized.budget }}",
+              "type": "number"
+            },
+            {
+              "id": "11d4569a-cf0c-448a-b545-d45c1ea96dff",
+              "name": "notes",
+              "value": "={{ $('Code in Python').item.json.normalized.notes }}",
+              "type": "string"
+            },
+            {
+              "id": "2fa50549-135d-40b4-b76a-88a11765aeb4",
+              "name": "consent",
+              "value": "={{ $('Code in Python').item.json.normalized.consent }}",
+              "type": "string"
+            },
+            {
+              "id": "8be0580a-f691-4bf5-ad25-da07047171da",
+              "name": "date",
+              "value": "={{ $now.format('MM/dd/yyyy hh:mm:ss ') }}",
+              "type": "number"
+            },
+            {
+              "id": "a96d6591-d33a-4db4-aedc-c344d5459d33",
+              "name": "country",
+              "value": "={{ $('Code in Python').item.json.normalized.country }}",
+              "type": "string"
+            },
+            {
+              "id": "0dd22fab-9ed9-4d83-bbfd-3fc664a295a0",
+              "name": "email",
+              "value": "={{ $json.normalized.email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2176,
+        16
+      ],
+      "id": "6a657621-bcd8-4d4a-9591-84aa3a9fa913",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ",
+          "mode": "list",
+          "cachedResultName": "Form South Derk Company (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 273477218,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ/edit#gid=273477218"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Full name": "={{ $('Edit Fields').item.json.full_name }}",
+            "Email Address": "={{ $('Edit Fields').item.json.email }}",
+            "Timestamp": "={{ $('Edit Fields').item.json.date }}",
+            "Company Name": "={{ $('Edit Fields').item.json.company_name }}",
+            "Company website": "={{ $('Edit Fields').item.json.website }}",
+            "Country": "={{ $('Edit Fields').item.json.country }}",
+            "Lead source ": "={{ $('Edit Fields').item.json.source }}",
+            "Estimated budget($)": "={{ $('Edit Fields').item.json.budget }}",
+            "Notes": "={{ $('Edit Fields').item.json.notes }}",
+            "Consent to contact": "={{ $('Edit Fields').item.json.consent }}",
+            "row_number": "={{ $json.row_number }}",
+            "Enrichment status": "Pending"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Full name",
+              "displayName": "Full name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email address",
+              "displayName": "Email address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company website",
+              "displayName": "Company website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Country",
+              "displayName": "Country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead source ",
+              "displayName": "Lead source ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estimated budget($)",
+              "displayName": "Estimated budget($)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Consent to contact",
+              "displayName": "Consent to contact",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Enrichment status",
+              "displayName": "Enrichment status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1504,
+        -80
+      ],
+      "id": "87d2dc37-0cde-4a29-896e-87713e720e6d",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "myUtOXMZbEAlOqlU",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1280,
+        16
+      ],
+      "id": "a42f6345-2593-4b43-b8ec-cee21bc5adc4",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://tvvot-186-96-67-109.a.free.pinggy.link/enrich",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "company_name",
+              "value": "={{ $('Edit Fields').item.json.company_name }}"
+            },
+            {
+              "name": "website",
+              "value": "={{ $('Edit Fields').item.json.website }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1072,
+        16
+      ],
+      "id": "2f7cb07e-c662-4a1f-89ed-fc5a14400e36",
+      "name": "HTTP Request",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "maxTries": 2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "31514af0-35b0-4855-8db7-3e4e22b97566",
+              "leftValue": "={{ $json.summary }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -896,
+        16
+      ],
+      "id": "616e7c1c-607b-45b0-bc42-9ed9405080c1",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ",
+          "mode": "list",
+          "cachedResultName": "Form South Derk Company (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 273477218,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ/edit#gid=273477218"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Enrichment status": "Done",
+            "Summary": "={{ $json.summary }}",
+            "Lead score": "={{ $json.lead_score }}",
+            "Next action": "={{ $json.next_action }}",
+            "Fit assessment": "={{ $json.fit_assessment }}",
+            "row_number": "={{ $('Merge').item.json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full name",
+              "displayName": "Full name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email address",
+              "displayName": "Email address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company website",
+              "displayName": "Company website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Country",
+              "displayName": "Country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead source ",
+              "displayName": "Lead source ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estimated budget($)",
+              "displayName": "Estimated budget($)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Consent to contact",
+              "displayName": "Consent to contact",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Enrichment status",
+              "displayName": "Enrichment status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead score",
+              "displayName": "Lead score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Next action",
+              "displayName": "Next action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Error log",
+              "displayName": "Error log",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Fit assessment",
+              "displayName": "Fit assessment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -624,
+        -32
+      ],
+      "id": "bc1c29e6-2612-499e-93e1-5ab2eb976148",
+      "name": "DONE STATUS",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "myUtOXMZbEAlOqlU",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ",
+          "mode": "list",
+          "cachedResultName": "Form South Derk Company (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 273477218,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12JEW50iTyUYwN2bGdvp_ExVoHfXjSUsn3KB-7tt1ocQ/edit#gid=273477218"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $json.row_number }}",
+            "Error log": "={{ $json.error.message }}",
+            "Enrichment status": "Error"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full name",
+              "displayName": "Full name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email address",
+              "displayName": "Email address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company website",
+              "displayName": "Company website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Country",
+              "displayName": "Country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead source ",
+              "displayName": "Lead source ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estimated budget($)",
+              "displayName": "Estimated budget($)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Consent to contact",
+              "displayName": "Consent to contact",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Enrichment status",
+              "displayName": "Enrichment status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead score",
+              "displayName": "Lead score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Next action",
+              "displayName": "Next action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Error log",
+              "displayName": "Error log",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fit assessment",
+              "displayName": "Fit assessment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -624,
+        160
+      ],
+      "id": "13aac7a3-ce54-4acf-a2ae-d655948d15c1",
+      "name": "ERROR STATUS",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "myUtOXMZbEAlOqlU",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in Python",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in Python": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "DONE STATUS",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ERROR STATUS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "8DThenUmwmCzxWSLZ7PJB"
+  },
+  "versionId": "4ca1ee75-4d49-48e2-86e7-bc52035f1a7a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1188b809ccffc6ff4466c5d04ef36af040f6d6ab9f65f77038319850a2de5e41"
+  },
+  "id": "9tVUFNocaEMjPNs-RgH_c",
+  "tags": []
+}
